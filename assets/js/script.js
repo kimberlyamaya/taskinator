@@ -31,7 +31,7 @@ var taskFormHandler = function(event) {
     // has data attribute, so get task id and call function to complete edit procsss
     if (isEdit) {
         var taskId = formEl.getAttribute("data-task-id");
-        completEditTask(taskNameInput, taskTypeInput, taskId);
+        completeEditTask(taskNameInput, taskTypeInput, taskId);
     }
 
     // no data attribute, so create object as normal and pass to createTaskEl function
@@ -70,11 +70,10 @@ var createTaskEl = function(taskDataObj) {
 
     tasks.push(taskDataObj);
 
+    saveTasks();
+
     // increase task counter for the next unqiue id
     taskIDCounter++;
-
-    console.log(taskDataObj);
-    console.log(taskDataObj.status);
 }; 
 
 var createTaskActions = function(taskId) {
@@ -157,6 +156,8 @@ var deleteTask = function(taskId) {
 
     // reassign tasks array to be the same as updatedTaskArr
     tasks = updatedTaskArr;
+
+    saveTasks();
 };
 
 var editTask = function(taskId) {
@@ -178,7 +179,7 @@ var editTask = function(taskId) {
     formEl.setAttribute("data-task-id", taskId);
 };
 
-var completEditTask = function(taskName, taskType, taskId) {
+var completeEditTask = function(taskName, taskType, taskId) {
     // find the matching task list item
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
 
@@ -195,6 +196,8 @@ var completEditTask = function(taskName, taskType, taskId) {
     };
 
     alert("Task Updated!");
+
+    saveTasks();
 
     // remove task id and chaning button text back to normal
     formEl.removeAttribute("data-task-id");
@@ -227,8 +230,12 @@ var taskStatusChangeHandler = function (event) {
             tasks[i].status = statusValue;
         }
     }
-
-    console.log(tasks);
+    
+    saveTasks();
 };
+
+var saveTasks = function() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
